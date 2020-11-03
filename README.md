@@ -16,9 +16,13 @@ Quiz application built with Django. Mostly built to try out Django following a g
 
 ## Setup
 
-These setup instructions assume you already have Python and [virtualenv](https://pypi.org/project/virtualenv/) installed. The following will clone this repository, setup and activate a virtual environment, and install dependencies.
+These setup instructions assume you already have Python and [virtualenv](https://pypi.org/project/virtualenv/) installed. 
 
-### Windows
+### 1. Install dependencies
+
+The following will clone this repository, setup and activate a virtual environment, and install dependencies.
+
+#### Windows
 
 ```shell script
 git clone https://github.com/NeedsSoySauce/COMPSCI-235-A3.git
@@ -28,7 +32,7 @@ virtualenv .virtualenv
 pip install -r requirements.txt
 ```
 
-### Mac OS / Linux
+#### Mac OS / Linux
 
 ```shell script
 git clone https://github.com/NeedsSoySauce/COMPSCI-235-A3.git
@@ -37,6 +41,24 @@ virtualenv .virtualenv
 source .\.virtualenv\Scripts\activate
 pip install -r requirements.txt
 ```
+
+### 2. Setup a local database
+
+This will initialize a local sqlite3 database for development and testing.
+
+```shell script
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 3. Create a superuser
+
+The following will bring up a prompt where you can enter a username and password.
+
+```shell script
+python manage.py createsuperuser
+```
+
 ## Execution
 
 To start a development server:

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if quizzes %}
+        <ul>
+            {% for quiz in quizzes %}
+                <li>{{ quiz.quiz_name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {{ no_quizzes_message }}
+    {% endif %}
+{% endblock %}

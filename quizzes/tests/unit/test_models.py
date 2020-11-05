@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from quizzes.tests import create_populated_quiz_question_response, create_populated_quiz_attempt
+from quizzes.tests import create_populated_quiz_question_response, create_populated_quiz_attempt, \
+    create_populated_question
 
 
 class QuizQuestionResponseModelTests(TestCase):
@@ -40,3 +41,15 @@ class QuizAttemptModelTests(TestCase):
         """ Max score equals the number of questions when there are questions. """
         quiz_attempt = create_populated_quiz_attempt([False])
         self.assertEquals(quiz_attempt.max_score(), 1)
+
+
+class QuestionModelTests(TestCase):
+    def test_is_multiple_choice_when_true(self):
+        """ Returns True when a question has more than one correct answer. """
+        question = create_populated_question([True, True])
+        self.assertTrue(question.is_multiple_choice())
+
+    def test_is_multiple_choice_when_false(self):
+        """ Returns False when a question has one correct answer. """
+        question = create_populated_question([True])
+        self.assertFalse(question.is_multiple_choice())

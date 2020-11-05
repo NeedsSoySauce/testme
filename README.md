@@ -1,18 +1,18 @@
 # testme
 
-Quiz application built with Django. Mostly built to try out Django following a good experience using Flask in a previous project.
+Quiz application built with Django. Mostly built to try out Django following a good experience using Flask.
 
 ### Planned features
 
-- [ ] Create quizes
-- [ ] Add questions to quizes
-- [ ] Add time limits to quizes and or individual questions
-- [ ] See results at the end of a quiz
+- [ ] Create quizzes
+- [ ] Add questions to quizzes
+- [ ] Add time limits to quizzes and or individual questions
+- [x] See results at the end of a quiz
 - [ ] See stats for questions in a quiz to see how other users are doing
-- [ ] See stats for user on their own
-- [ ] Categorize quizes
-- [ ] Search for quizes in a public database
-- [ ] Create private quizes with a shareable link
+- [ ] Detailed view of your own stats
+- [ ] Categorize quizzes
+- [ ] Search for quizzes in a public database
+- [ ] Create private quizzes with a shareable link
 
 ## Setup
 

@@ -65,11 +65,13 @@ def quizzes(request, quiz_id):
 
     # TODO prevent a client changing a question they've already answered while a quiz is in-progress
 
+    is_multiple_choice = question.is_multiple_choice()
+
     # Create choices for question forms
     choices = tuple((answer.id, answer.answer_text) for answer in question.answer_set.all())
 
     if request.method == 'POST':
-        form = QuestionForm(request.POST, choices=choices, multi=True)
+        form = QuestionForm(request.POST, choices=choices, multi=is_multiple_choice)
         if form.is_valid():
             # Update quiz attempt
             answer_ids = form.cleaned_data['answers']
@@ -105,7 +107,7 @@ def quizzes(request, quiz_id):
 
             return redirect('quizzes:quiz', quiz_id=quiz_id)
     else:
-        form = QuestionForm(choices=choices, multi=True)
+        form = QuestionForm(choices=choices, multi=is_multiple_choice)
 
     context = {
         'quiz': quiz,

@@ -27,6 +27,12 @@ class Question(AbstractTimestampedModel):
     def __str__(self):
         return self.question_text
 
+    def is_multiple_choice(self) -> bool:
+        """
+        Returns True if this question is multiple choice (a question is multiple choice if it has multiple correct answers.
+        """
+        return self.answer_set.filter(is_correct_answer=True).count() > 1
+
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)

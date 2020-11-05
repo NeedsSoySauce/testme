@@ -12,7 +12,7 @@ class TagInLine(admin.TabularInline):
 
 class AnswerInLine(admin.TabularInline):
     model = Answer
-    extra = 1
+    extra = 3
     classes = ['collapse']
     readonly_fields = ('votes',)
 
@@ -44,7 +44,7 @@ class AnswerAdmin(admin.ModelAdmin):
 
 class QuestionInLine(admin.TabularInline):
     model = Quiz.questions.through
-    extra = 1
+    extra = 3
     classes = ['collapse']
     verbose_name_plural = 'Questions'
 

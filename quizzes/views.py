@@ -37,16 +37,6 @@ def quizzes(request, quiz_id):
     random.seed(quiz_attempt.seed)
     random.shuffle(question_ids)
 
-    # Server determines what question to deliver
-    # If a quiz attempt was just created it's the first question, otherwise the server needs to determine what question
-    # the client is currently on
-
-    # We could denormalize and store this in some kind of 'quiz progress field' e.g. 'current_question'
-    # We could retrieve the ids of all of the question ids which the client has responded to so far to retrieve the id
-    # of the next question the client hasn't responded to
-    # This also has the advantage of if a question is added after the client has started the quiz they'll be shown that
-    # question
-
     # Check if a quiz attempt was created or we're resuming a previous one
     if is_created:
         question = Question.objects.get(pk=question_ids[0])

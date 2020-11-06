@@ -19,7 +19,40 @@ def index(request):
 
 
 @require_http_methods(["GET", "HEAD", "POST"])
-def quizzes(request, quiz_id):
+def quizzes(request):
+    """
+    This is the page clients will use to create quizzes, delete them (if they made them) etc.
+
+    The requirements I've decided on for this feature are that clients should be able to:
+
+    - Name the quiz and enter a description
+    - Add questions they've created before to this quiz or create however many new questions they like
+        - Add however many answers to a question they like
+    - Tag the questions they create
+    - Do all of this without loading a new page
+
+    The solution (I have) is to do this using JavaScript and a REST API.
+
+    1. Client requests quizzes page which contains inputs to enter a quizzes name, etc
+    2. Client retrieves a list of their questions (just the id and question text is sufficient here)
+        2.1 TODO If a question is selected client can retrieve details on that question
+    3. Client can select one of the above questions to add it which makes a request to link that question to this quiz
+       or they can create a new question
+        3.1 If the client chooses to create a new question they submit the question text, description, and tags, as well
+            the id of the quiz they want to add the question to
+
+    There are some possible security concerns here:
+
+    1. Need to prevent a user from adding another user's questions to their quizzes
+    2. Need to prevent a user from adding questions to another user's quizzes
+
+    The above can be achieved by making sure the user who created the question and quiz match.
+    """
+    return render(request, 'quizzes/quizzes.html')
+
+
+@require_http_methods(["GET", "HEAD", "POST"])
+def quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
 
     # Client may not have a session if this is their first request

@@ -74,3 +74,7 @@ To run tests:
 ```shell script
 python manage.py test
 ```
+
+## Deployment
+
+This project has not yet been deployed. **The secret key in settings.py is for development only**. If deploying to a production environment you should use environment variables (or some other system) that does not expose your secret key to the public.

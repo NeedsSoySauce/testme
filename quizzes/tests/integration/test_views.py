@@ -1,75 +1,272 @@
-import random
+import datetime
+from unittest import mock
 
+import pytz
 from django.test import TestCase
-from django.urls import reverse
 
-from quizzes import INDEX_LATEST_QUIZ_COUNT, NO_QUIZZES_AVAILABLE_MESSAGE
-from quizzes.tests import create_quizzes, create_quiz, create_populated_question
+from quizzes.tests import create_tag, create_api_response, create_question, MockedTestCase, create_answer, create_quiz, \
+    create_quizzes
 
 
-class QuizzesIndexTests(TestCase):
-    def test_no_quizzes(self):
-        """ The correct message is displayed if no quizzes are available. """
-        response = self.client.get(reverse('quizzes:index'))
+class TagsTests(TestCase):
+    def test_list_view_empty(self):
+        """ Returns an empty array when there are no results. """
+        expected = create_api_response(
+            data={
+                "count": 0,
+                "next": None,
+                "previous": None,
+                "results": []
+            })
+
+        response = self.client.get('/api/tags', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, NO_QUIZZES_AVAILABLE_MESSAGE)
-        self.assertQuerysetEqual(response.context['quizzes'], [])
+        self.assertJSONEqual(response.content.decode(), expected)
 
-    def test_latest_quizzes_are_displayed_with_less_than_max(self):
-        """ The most recently created quizzes are displayed when there's less than the maximum amount. """
-        objects = create_quizzes(INDEX_LATEST_QUIZ_COUNT - 1)
-        response = self.client.get(reverse('quizzes:index'))
+    def test_list_view_non_empty(self):
+        """ Returns all tags when no id is given. """
+        create_tag('tag1')
+        create_tag('tag2')
+        expected = create_api_response(
+            data={'count': 2,
+                  'next': None,
+                  'previous': None,
+                  'results': [
+                      {'name': 'tag1', 'url': 'http://testserver/api/tags/1/'},
+                      {'name': 'tag2', 'url': 'http://testserver/api/tags/2/'}
+                  ]})
+
+        response = self.client.get('/api/tags', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context['quizzes'], [repr(obj) for obj in objects])
+        self.assertJSONEqual(response.content.decode(), expected)
 
-    def test_latest_quizzes_are_displayed_with_max(self):
-        """ The most recently created quizzes are displayed when there's exactly the maximum amount. """
-        objects = create_quizzes(INDEX_LATEST_QUIZ_COUNT)
-        response = self.client.get(reverse('quizzes:index'))
+    def test_detail_view(self):
+        """ Returns the correct tag when a valid id is given. """
+        create_tag('tag1')
+        create_tag('tag2')
+        expected = create_api_response(data={'name': 'tag1', 'url': 'http://testserver/api/tags/1/'})
+
+        response = self.client.get('/api/tags/1', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context['quizzes'], [repr(obj) for obj in objects])
+        self.assertJSONEqual(response.content.decode(), expected)
 
-    def test_latest_quizzes_are_displayed_with_more_than_max(self):
-        """ The most recently created quizzes are displayed when there's more than the maximum amount. """
-        objects = create_quizzes(INDEX_LATEST_QUIZ_COUNT + 1)
-        response = self.client.get(reverse('quizzes:index'))
+    def test_detail_view_invalid_id(self):
+        """ Returns the correct response when an invalid id is specified. """
+        expected = create_api_response(404, "Not Found")
+        response = self.client.get('/api/tags/1', follow=True)
+        self.assertEqual(response.status_code, 404)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+
+class QuestionTests(MockedTestCase):
+
+    def test_list_view_empty(self):
+        """ Returns an empty array when there are no results. """
+        expected = create_api_response(
+            data={
+                "count": 0,
+                "next": None,
+                "previous": None,
+                "results": []
+            })
+
+        response = self.client.get('/api/questions', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context['quizzes'], [repr(obj) for obj in objects])
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_list_view_non_empty(self):
+        """ Returns all questions when no id is given. """
+        create_question('question1')
+        create_question('question2')
+
+        expected = create_api_response(
+            data={'count': 2,
+                  'next': None,
+                  'previous': None,
+                  'results': [
+                      {'answers': [],
+                       'created_on': '2020-01-01T13:00:00+13:00',
+                       'description': '',
+                       'is_multiple_choice': False,
+                       'tags': [],
+                       'text': 'question1',
+                       'updated_on': '2020-01-01T13:00:00+13:00',
+                       'url': 'http://testserver/api/questions/1/'},
+                      {'answers': [],
+                       'created_on': '2020-01-01T13:00:00+13:00',
+                       'description': '',
+                       'is_multiple_choice': False,
+                       'tags': [],
+                       'text': 'question2',
+                       'updated_on': '2020-01-01T13:00:00+13:00',
+                       'url': 'http://testserver/api/questions/2/'}
+                  ]})
+
+        response = self.client.get('/api/questions', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_detail_view(self):
+        """ Returns the correct question when a valid id is given. """
+        create_question('question1')
+        create_question('question2')
+        expected = create_api_response(data={'answers': [],
+                                             'created_on': '2020-01-01T13:00:00+13:00',
+                                             'description': '',
+                                             'is_multiple_choice': False,
+                                             'tags': [],
+                                             'text': 'question1',
+                                             'updated_on': '2020-01-01T13:00:00+13:00',
+                                             'url': 'http://testserver/api/questions/1/'
+                                             })
+
+        response = self.client.get('/api/questions/1', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_detail_view_invalid_id(self):
+        """ Returns the correct response when an invalid id is specified. """
+        expected = create_api_response(404, "Not Found")
+        response = self.client.get('/api/questions/1', follow=True)
+        self.assertEqual(response.status_code, 404)
+        self.assertJSONEqual(response.content.decode(), expected)
 
 
-class QuizzesQuizAttemptTests(TestCase):
+class AnswerTests(MockedTestCase):
     def setUp(self) -> None:
-        self.quiz = create_quiz()
+        self.question = create_question()
 
-        # Create two questions, the second of which is multiple choice
-        self.q1 = create_populated_question([True, False], 'Question 1')
-        self.q2 = create_populated_question([True, True, False], ' Question 2')
+    def test_list_view_empty(self):
+        """ Returns an empty array when there are no results. """
+        expected = create_api_response(
+            data={
+                "count": 0,
+                "next": None,
+                "previous": None,
+                "results": []
+            })
 
-        self.quiz.questions.add(self.q1, self.q2)
-        self.quiz.save()
-
-        self.q1_answer_ids = list(self.q1.answer_set.all().filter(is_correct_answer=True).values_list('pk', flat=True))
-        self.q2_answer_ids = list(self.q2.answer_set.all().filter(is_correct_answer=True).values_list('pk', flat=True))
-
-        # Questions are shuffled, so to we need to set a seed to create consistent results.
-        # This seed will result in question 1 and then question 2 being shown.
-        random.seed(123)
-
-    def test_quiz_attempt(self):
-        url_kwargs = {'quiz_id': self.quiz.pk}
-        url = reverse('quizzes:quiz', kwargs=url_kwargs)
-
-        response = self.client.get(url)
+        response = self.client.get('/api/answers', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.csrf_cookie_set)
-        self.assertContains(response, 'Question 1', html=True)
+        self.assertJSONEqual(response.content.decode(), expected)
 
-        response = self.client.post(url, data={'answers': self.q1_answer_ids}, follow=True)
-        self.assertRedirects(response, url)
-        self.assertTrue(response.csrf_cookie_set)
-        self.assertContains(response, 'Question 2', html=True)
+    def test_list_view_non_empty(self):
+        """ Returns all answers when no id is given. """
+        create_answer(self.question, True)
+        create_answer(self.question, False)
 
-        response = self.client.post(url, data={'answers': self.q2_answer_ids}, follow=True)
-        self.assertRedirects(response, reverse('quizzes:results', kwargs=url_kwargs))
-        self.assertContains(response, 'Results', html=True)
-        self.assertContains(response, '2 / 2')  # html = False here as we only want a character-by-character match
+        expected = create_api_response(
+            data={'count': 2,
+                  'next': None,
+                  'previous': None,
+                  'results': [
+                      {'is_correct_answer': True,
+                       'question': 'http://testserver/api/questions/1/',
+                       'text': 'answer',
+                       'url': 'http://testserver/api/answers/1/',
+                       'votes': 0},
+                      {'is_correct_answer': False,
+                       'question': 'http://testserver/api/questions/1/',
+                       'text': 'answer',
+                       'url': 'http://testserver/api/answers/2/',
+                       'votes': 0}
+                  ]})
+        self.maxDiff = None
+
+        response = self.client.get('/api/answers', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_detail_view(self):
+        """ Returns the correct question when a valid id is given. """
+        create_answer(self.question, True)
+        create_answer(self.question, False)
+
+        expected = create_api_response(
+            data={'is_correct_answer': True,
+                  'question': 'http://testserver/api/questions/1/',
+                  'text': 'answer',
+                  'url': 'http://testserver/api/answers/1/',
+                  'votes': 0})
+
+        response = self.client.get('/api/answers/1', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_detail_view_invalid_id(self):
+        """ Returns the correct response when an invalid id is specified. """
+        expected = create_api_response(404, "Not Found")
+        response = self.client.get('/api/answers/1', follow=True)
+        self.assertEqual(response.status_code, 404)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+
+class QuizTests(MockedTestCase):
+    def setUp(self) -> None:
+        self.question = create_question()
+
+    def test_list_view_empty(self):
+        """ Returns an empty array when there are no results. """
+        expected = create_api_response(
+            data={
+                "count": 0,
+                "next": None,
+                "previous": None,
+                "results": []
+            })
+
+        response = self.client.get('/api/quizzes', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_list_view_non_empty(self):
+        """ Returns all quizzes when no id is given. """
+        create_quizzes(2)
+        expected = create_api_response(
+            data={
+                "count": 2,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {'created_on': '2020-01-01T13:00:00+13:00',
+                     'description': '',
+                     'name': 'quiz_0',
+                     'questions': [],
+                     'updated_on': '2020-01-01T13:00:00+13:00',
+                     'url': 'http://testserver/api/quizzes/1/'},
+                    {'created_on': '2020-01-01T13:00:00+13:00',
+                     'description': '',
+                     'name': 'quiz_1',
+                     'questions': [],
+                     'updated_on': '2020-01-01T13:00:00+13:00',
+                     'url': 'http://testserver/api/quizzes/2/'}
+                ]
+            })
+
+        response = self.client.get('/api/quizzes', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_detail_view(self):
+        """ Returns the correct question when a valid id is given. """
+        create_quizzes(2)
+        expected = create_api_response(
+            data={'created_on': '2020-01-01T13:00:00+13:00',
+                  'description': '',
+                  'name': 'quiz_0',
+                  'questions': [],
+                  'updated_on': '2020-01-01T13:00:00+13:00',
+                  'url': 'http://testserver/api/quizzes/1/'})
+
+        response = self.client.get('/api/quizzes/1', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    def test_detail_view_invalid_id(self):
+        """ Returns the correct response when an invalid id is specified. """
+        expected = create_api_response(404, "Not Found")
+        response = self.client.get('/api/quizzes/1', follow=True)
+        self.assertEqual(response.status_code, 404)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+# Test JWT

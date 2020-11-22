@@ -28,17 +28,17 @@ class QuestionAdmin(admin.ModelAdmin):
     exclude = ('tags',)
     readonly_fields = ('created_on', 'updated_on')
     fieldsets = [
-        (None, {'fields': ['created_on', 'updated_on', 'question_text', 'description']})
+        (None, {'fields': ['created_on', 'updated_on', 'text', 'description']})
     ]
     inlines = [AnswerInLine, TagInLine]
-    list_display = ('question_text', 'created_on', 'updated_on')
+    list_display = ('text', 'created_on', 'updated_on')
     list_filter = ['created_on', 'tags']
-    search_fields = ['question_text', 'tags__tag_name', 'description']
+    search_fields = ['text', 'tags__name', 'description']
 
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-    search_fields = ['answer_text']
+    search_fields = ['text']
     readonly_fields = ('votes',)
 
 
@@ -54,9 +54,9 @@ class QuizAdmin(admin.ModelAdmin):
     exclude = ('questions',)
     readonly_fields = ('created_on', 'updated_on')
     fieldsets = [
-        (None, {'fields': ['created_on', 'updated_on', 'quiz_name', 'description']})
+        (None, {'fields': ['created_on', 'updated_on', 'name', 'description']})
     ]
     inlines = [QuestionInLine]
-    list_display = ('quiz_name', 'created_on', 'updated_on')
+    list_display = ('name', 'created_on', 'updated_on')
     list_filter = ['created_on', 'questions__tags']
-    search_fields = ['quiz_name', 'description', 'questions__question_text']
+    search_fields = ['name', 'description', 'questions__text']

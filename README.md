@@ -4,15 +4,16 @@ Quiz application built with Django. Mostly built to try out Django following a g
 
 ### Planned features
 
-- [ ] Create quizzes
-- [ ] Add questions to quizzes
+- [x] Create quizzes
+- [x] Add questions to quizzes
 - [ ] Add time limits to quizzes and or individual questions
 - [x] See results at the end of a quiz
 - [ ] See stats for questions in a quiz to see how other users are doing
 - [ ] Detailed view of your own stats
-- [ ] Categorize quizzes
+- [x] Categorize quizzes
 - [ ] Search for quizzes in a public database
 - [ ] Create private quizzes with a shareable link
+- [ ] Setup loading of keys from environment variables
 
 ## Setup
 
@@ -47,11 +48,10 @@ pip install -r requirements.txt
 This will initialize a local sqlite3 database for development and testing.
 
 ```shell script
-python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 3. Create a superuser
+### 3. Create a superuser (optional)
 
 The following will bring up a prompt where you can enter a username and password.
 
@@ -69,8 +69,14 @@ python manage.py runserver
 
 ## Testing
 
+This project uses Django default testing suite `unittest`. Experience with it so far suggests moving to `pytest` could be worthwhile.
+
 To run tests:
 
 ```shell script
 python manage.py test
 ```
+
+## Deployment
+
+This project has not yet been deployed. **The secret key in settings.py is for development only**. If deploying to a production environment you should use environment variables (or some other system) that does not expose your secret key to the public.

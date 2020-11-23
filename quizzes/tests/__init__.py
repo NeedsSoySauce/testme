@@ -48,11 +48,9 @@ def create_api_response(status_code: int = 200, message: str = "OK", data=None):
     response = {
         "status": status_code,
         "success": status_code < 400,
-        "message": message
+        "message": message,
+        'data': data
     }
-
-    if data:
-        response['data'] = data
 
     return response
 

@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'quizzes',
-    'rest_framework'
+    'rest_framework',
+    'testme_auth',
+    'utils'
 ]
 
 MIDDLEWARE = [
@@ -78,6 +80,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Auth
+AUTH_USER_MODEL = 'testme_auth.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -130,9 +135,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
     'DEFAULT_RENDERER_CLASSES': [
-        'quizzes.renderers.QuizzesJsonRenderer',
+        'utils.renderers.DescriptiveJsonRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'EXCEPTION_HANDLER': 'utils.exception_handlers.custom_exception_handler',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }

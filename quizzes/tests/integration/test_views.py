@@ -1,10 +1,6 @@
-import datetime
-from unittest import mock
-
-import pytz
 from django.test import TestCase
 
-from quizzes.tests import create_tag, create_api_response, create_question, MockedTestCase, create_answer, create_quiz, \
+from quizzes.tests import create_tag, create_api_response, create_question, MockedTestCase, create_answer, \
     create_quizzes
 
 

@@ -5,8 +5,10 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, email: str = None, password: str = None):
-        """ Creates and saves a user with the given credentials. """
+
+    def _create_user(self, username, email: str = None, password: str = None, **kwargs):
+        kwargs.setdefault('is_staff', False)
+        kwargs.setdefault('is_superuser', False)
 
         # NULL is stored if no email is provided
         if not email:
@@ -16,7 +18,8 @@ class UserManager(BaseUserManager):
 
         user = self.model(
             username=username,
-            email=email
+            email=email,
+            **kwargs
         )
 
         # A password is generated if none is specified
@@ -24,21 +27,21 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password):
-        """ Creates and saves a superuser with the given credentials. """
-        user = self.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
+    def create_user(self, username, email: str = None, password: str = None, **kwargs):
+        """ Creates and saves a user with the given credentials. """
+        return self._create_user(username, email=email, password=password, **kwargs)
 
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
+    def create_superuser(self, username, email: str = None, password: str = None, **kwargs):
+        """ Creates and saves a superuser with the given credentials. """
+        kwargs.setdefault('is_staff', True)
+        kwargs.setdefault('is_superuser', True)
+        return self._create_user(username, email=email, password=password, **kwargs)
 
 
 class User(AbstractUser):
     username = models.CharField(unique=True, max_length=32, validators=[MinLengthValidator(2)])
-    email = models.CharField(unique=True, max_length=254, null=True, validators=[EmailValidator()])
+    email = models.EmailField(unique=True, null=True)
 
     objects = UserManager()
+
+    REQUIRED_FIELDS = []

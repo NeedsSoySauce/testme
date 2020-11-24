@@ -17,7 +17,7 @@ class UserModelTests(TestCase):
     def test_create_user_no_email(self):
         """ Creating a user with no email works and stores NULL as their email in the database. """
         user = get_user_model().objects.create_user(self.username, None, self.password)
-        self.assertIsNone(user.email)
+        self.assertEqual(user.email, None)
 
     def test_create_user_duplicate_email(self):
         """ Creating a user with an email that's in use fails. """

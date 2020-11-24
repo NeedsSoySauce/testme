@@ -7,7 +7,7 @@ Quiz application built with Django. Mostly built to try out Django following a g
 - [x] Create quizzes
 - [x] Add questions to quizzes
 - [ ] Add time limits to quizzes and or individual questions
-- [x] See results at the end of a quiz
+- [ ] See results at the end of a quiz
 - [ ] See stats for questions in a quiz to see how other users are doing
 - [ ] Detailed view of your own stats
 - [x] Categorize quizzes

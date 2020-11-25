@@ -20,23 +20,24 @@ class Tag(models.Model):
 
 
 class Question(AbstractTimestampedModel):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    creator = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     text = models.CharField(max_length=255)
     description = models.TextField(help_text="Any additional details related to this question", blank=True)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
         return self.text
 
     def is_multiple_choice(self) -> bool:
         """
-        Returns True if this question is multiple choice (a question is multiple choice if it has multiple correct answers.
+        Returns True if this question is multiple choice (a question is multiple choice if it has multiple correct
+        answers.
         """
         return self.answers.filter(is_correct_answer=True).count() > 1
 
 
 class Answer(models.Model):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    creator = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     text = models.CharField(max_length=255)
     votes = models.IntegerField(default=0, editable=False, help_text="Number of times this answer has been chosen.")
@@ -47,10 +48,10 @@ class Answer(models.Model):
 
 
 class Quiz(AbstractTimestampedModel):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    creator = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=255)
     description = models.TextField(help_text="Any additional details related to this quiz", blank=True)
-    questions = models.ManyToManyField(Question)
+    questions = models.ManyToManyField(Question, blank=True)
 
     class Meta:
         verbose_name_plural = 'Quizzes'

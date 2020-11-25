@@ -34,14 +34,14 @@ class QuizTests(MockedTestCase):
                      'questions': [],
                      'updated_on': '2020-01-01T13:00:00+13:00',
                      'url': 'http://testserver/api/quizzes/1/',
-                     'user': None},
+                     'creator': None},
                     {'created_on': '2020-01-01T13:00:00+13:00',
                      'description': '',
                      'name': 'quiz_1',
                      'questions': [],
                      'updated_on': '2020-01-01T13:00:00+13:00',
                      'url': 'http://testserver/api/quizzes/2/',
-                     'user': None}
+                     'creator': None}
                 ]
             })
 
@@ -59,7 +59,7 @@ class QuizTests(MockedTestCase):
                   'questions': [],
                   'updated_on': '2020-01-01T13:00:00+13:00',
                   'url': 'http://testserver/api/quizzes/1/',
-                  'user': None})
+                  'creator': None})
 
         response = self.client.get('/api/quizzes/1', follow=True)
         self.assertEqual(response.status_code, 200)

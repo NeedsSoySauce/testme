@@ -3,6 +3,8 @@ from typing import List
 from unittest import mock
 
 import pytz
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
 from quizzes import INDEX_LATEST_QUIZ_COUNT
@@ -62,3 +64,17 @@ class MockedTestCase(TestCase):
         mocked = datetime.datetime(2020, 1, 1, 0, 0, 0, tzinfo=pytz.utc)
         with mock.patch('django.utils.timezone.now', mock.Mock(return_value=mocked)):
             super().run(result)
+
+
+class UserAuthTestsMixin:
+    """ Adds a 'setUpTestUsers' method to create """
+
+    def setUpTestUsers(self) -> None:
+        """
+        Creates two regular users '.user' and '.other'; an admin user '.admin'; and an anonymous user '.anonymous'.
+        """
+        self.password = "thisisasecret"
+        self.other = get_user_model().objects.create_user("other", password=self.password)
+        self.user = get_user_model().objects.create_user("user", password=self.password)
+        self.admin = get_user_model().objects.create_superuser("admin", password=self.password)
+        self.anonymous = AnonymousUser()

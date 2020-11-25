@@ -15,6 +15,14 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Answer
         fields = '__all__'
+        extra_kwargs = {
+            'creator': {
+                'read_only': True
+            },
+            'votes': {
+                'read_only': True
+            }
+        }
 
 
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
@@ -24,6 +32,11 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Question
         fields = '__all__'
+        extra_kwargs = {
+            'creator': {
+                'read_only': True
+            }
+        }
 
 
 class QuizSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,3 +46,8 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Quiz
         fields = '__all__'
+        extra_kwargs = {
+            'creator': {
+                'read_only': True
+            }
+        }

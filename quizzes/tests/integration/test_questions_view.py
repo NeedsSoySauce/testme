@@ -35,7 +35,7 @@ class QuestionTests(MockedTestCase):
                        'text': 'question1',
                        'updated_on': '2020-01-01T13:00:00+13:00',
                        'url': 'http://testserver/api/questions/1/',
-                       'user': None},
+                       'creator': None},
                       {'answers': [],
                        'created_on': '2020-01-01T13:00:00+13:00',
                        'description': '',
@@ -44,7 +44,7 @@ class QuestionTests(MockedTestCase):
                        'text': 'question2',
                        'updated_on': '2020-01-01T13:00:00+13:00',
                        'url': 'http://testserver/api/questions/2/',
-                       'user': None}
+                       'creator': None}
                   ]})
 
         response = self.client.get('/api/questions', follow=True)
@@ -63,7 +63,7 @@ class QuestionTests(MockedTestCase):
                                              'text': 'question1',
                                              'updated_on': '2020-01-01T13:00:00+13:00',
                                              'url': 'http://testserver/api/questions/1/',
-                                             'user': None
+                                             'creator': None
                                              })
 
         response = self.client.get('/api/questions/1', follow=True)

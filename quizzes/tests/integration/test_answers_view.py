@@ -1,8 +1,13 @@
-from quizzes.tests import create_api_response, create_question, MockedTestCase, create_answer
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
+from parameterized import parameterized
+
+from quizzes.tests import create_api_response, create_question, MockedTestCase, create_answer, UserAuthTestsMixin
 
 
-class AnswerTests(MockedTestCase):
+class AnswerTests(MockedTestCase, UserAuthTestsMixin):
     def setUp(self) -> None:
+        self.setUpTestUsers()
         self.question = create_question()
 
     def test_list_view_empty(self):
@@ -34,13 +39,13 @@ class AnswerTests(MockedTestCase):
                        'text': 'answer',
                        'url': 'http://testserver/api/answers/1/',
                        'votes': 0,
-                       'user': None},
+                       'creator': None},
                       {'is_correct_answer': False,
                        'question': 'http://testserver/api/questions/1/',
                        'text': 'answer',
                        'url': 'http://testserver/api/answers/2/',
                        'votes': 0,
-                       'user': None}
+                       'creator': None}
                   ]})
         self.maxDiff = None
 
@@ -59,7 +64,7 @@ class AnswerTests(MockedTestCase):
                   'text': 'answer',
                   'url': 'http://testserver/api/answers/1/',
                   'votes': 0,
-                  'user': None})
+                  'creator': None})
 
         response = self.client.get('/api/answers/1', follow=True)
         self.assertEqual(response.status_code, 200)
@@ -70,4 +75,41 @@ class AnswerTests(MockedTestCase):
         expected = create_api_response(404, "Not Found")
         response = self.client.get('/api/answers/1', follow=True)
         self.assertEqual(response.status_code, 404)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    @parameterized.expand([
+        'user',
+        'admin',
+        'anonymous'
+    ])
+    def test_create_answer(self, user_field):
+        """ Anonymous and authenticated users can create an answer. """
+        # Login user
+        user = getattr(self, user_field)
+        user_url = None
+
+        if not user.is_anonymous:
+            user_url = f'http://testserver/api/users/{user.pk}/'
+            is_authenticated = self.client.login(username=user.username, password=self.password)
+            self.assertTrue(is_authenticated)
+
+        question_url = f'http://testserver/api/questions/{self.question.pk}/'
+        expected = create_api_response(201,
+                                       "Created",
+                                       data={'is_correct_answer': True,
+                                             'question': question_url,
+                                             'text': 'answer',
+                                             'url': 'http://testserver/api/answers/1/',
+                                             'votes': 0,
+                                             'creator': user_url})
+
+        data = {
+            'is_correct_answer': True,
+            'question': question_url,
+            'text': 'answer'
+        }
+
+        response = self.client.post('/api/answers/', data=data)
+
+        self.assertEqual(response.status_code, 201)
         self.assertJSONEqual(response.content.decode(), expected)

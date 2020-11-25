@@ -1,28 +1,33 @@
-from rest_framework import viewsets
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Quiz, Question, Answer, Tag
+from .permissions import IsCreatorOrAdminUserOrReadOnly
 from .serializers import TagSerializer, QuestionSerializer, AnswerSerializer, QuizSerializer
+from .viewsets import UserLinkedModelViewSet
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(ModelViewSet):
     """ Allows tags to be viewed or edited. """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
-class QuestionViewSet(viewsets.ModelViewSet):
+class QuestionViewSet(UserLinkedModelViewSet):
     """ Allows questions to be viewed or edited. """
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+    permission_classes = [IsCreatorOrAdminUserOrReadOnly]
 
 
-class AnswerViewSet(viewsets.ModelViewSet):
+class AnswerViewSet(UserLinkedModelViewSet):
     """ Allows answers to be viewed or edited. """
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
+    permission_classes = [IsCreatorOrAdminUserOrReadOnly]
 
 
-class QuizViewSet(viewsets.ModelViewSet):
+class QuizViewSet(UserLinkedModelViewSet):
     """ Allows quizzes to be viewed or edited. """
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
+    permission_classes = [IsCreatorOrAdminUserOrReadOnly]

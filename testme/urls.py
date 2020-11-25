@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from quizzes.urls import router as quizzes_router
 from testme_auth.urls import router as auth_router
-from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.registry.extend(quizzes_router.registry)

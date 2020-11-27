@@ -113,3 +113,84 @@ class AnswerTests(MockedTestCase, UserAuthTestsMixin):
 
         self.assertEqual(response.status_code, 201)
         self.assertJSONEqual(response.content.decode(), expected)
+
+    @parameterized.expand([
+        'user',
+        'admin'
+    ])
+    def test_update_answer(self, user_field):
+        """ Authenticated users can update answers they created. """
+
+        # Login user
+        user = getattr(self, user_field)
+        user_url = None
+        creator = None
+
+        if not user.is_anonymous:
+            user_url = f'http://testserver/api/users/{user.pk}/'
+            creator = user
+            is_authenticated = self.client.login(username=user.username, password=self.password)
+            self.assertTrue(is_authenticated)
+
+        create_answer(self.question, True, creator=creator)
+
+        question_url = f'http://testserver/api/questions/{self.question.pk}/'
+        expected = create_api_response(200,
+                                       "OK",
+                                       data={'is_correct_answer': False,
+                                             'question': question_url,
+                                             'text': 'new text',
+                                             'url': 'http://testserver/api/answers/1/',
+                                             'votes': 0,
+                                             'creator': user_url})
+
+        data = {
+            'is_correct_answer': False,
+            'question': question_url,
+            'text': 'new text'
+        }
+
+        response = self.client.put('/api/answers/1/', data=data, content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    @parameterized.expand([
+        'user',
+        'admin'
+    ])
+    def test_partial_update_answer(self, user_field):
+        """ Authenticated users can partially update answers they created. """
+
+        # Login user
+        user = getattr(self, user_field)
+        user_url = None
+        creator = None
+
+        if not user.is_anonymous:
+            user_url = f'http://testserver/api/users/{user.pk}/'
+            creator = user
+            is_authenticated = self.client.login(username=user.username, password=self.password)
+            self.assertTrue(is_authenticated)
+
+        create_answer(self.question, True, creator=creator)
+
+        question_url = f'http://testserver/api/questions/{self.question.pk}/'
+        expected = create_api_response(200,
+                                       "OK",
+                                       data={'is_correct_answer': False,
+                                             'question': question_url,
+                                             'text': 'new text',
+                                             'url': 'http://testserver/api/answers/1/',
+                                             'votes': 0,
+                                             'creator': user_url})
+
+        data = {
+            'is_correct_answer': False,
+            'text': 'new text'
+        }
+
+        response = self.client.patch('/api/answers/1/', data=data, content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)

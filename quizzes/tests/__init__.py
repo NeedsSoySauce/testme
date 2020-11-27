@@ -19,8 +19,8 @@ def create_question(question_text: str = 'question'):
     return Question.objects.create(text=question_text or 'question')
 
 
-def create_answer(question: Question, is_correct_answer: bool):
-    return Answer.objects.create(question=question, text='answer', is_correct_answer=is_correct_answer)
+def create_answer(question: Question, is_correct_answer: bool, creator = None):
+    return Answer.objects.create(question=question, text='answer', is_correct_answer=is_correct_answer, creator=creator)
 
 
 def create_quizzes(number_of_quizzes=1):

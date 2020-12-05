@@ -194,3 +194,87 @@ class AnswerTests(MockedTestCase, UserAuthTestsMixin):
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), expected)
+
+
+
+    @parameterized.expand([
+        'admin',
+        'other',
+        'anonymous'
+    ])
+    def test_update_another_users_answer_as_admin(self, other_user_field):
+        """ Admin users can update answers created by any user. """
+
+        other = getattr(self, other_user_field)
+        user = getattr(self, 'admin')
+        user_url = None
+        creator = None
+
+        if not other.is_anonymous:
+            user_url = f'http://testserver/api/users/{other.pk}/'
+            creator = other
+
+        create_answer(self.question, True, creator=creator)
+
+        if not user.is_anonymous:
+            is_authenticated = self.client.login(username=user.username, password=self.password)
+            self.assertTrue(is_authenticated)
+
+        question_url = f'http://testserver/api/questions/{self.question.pk}/'
+        expected = create_api_response(200,
+                                       "OK",
+                                       data={'is_correct_answer': False,
+                                             'question': question_url,
+                                             'text': 'new text',
+                                             'url': 'http://testserver/api/answers/1/',
+                                             'votes': 0,
+                                             'creator': user_url})
+
+        data = {
+            'is_correct_answer': False,
+            'question': question_url,
+            'text': 'new text'
+        }
+
+        response = self.client.put('/api/answers/1/', data=data, content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), expected)
+
+    @parameterized.expand([
+        'admin',
+        'other',
+        'anonymous'
+    ])
+    def test_update_another_users_answer(self, other_user_field):
+        """ Authenticated non-admin users cannot update answers created by another user. """
+
+        other = getattr(self, other_user_field)
+        user = getattr(self, 'user')
+        creator = None
+
+        if not other.is_anonymous:
+            creator = other
+
+        create_answer(self.question, True, creator=creator)
+
+        if not user.is_anonymous:
+            user_url = f'http://testserver/api/users/{user.pk}/'
+            is_authenticated = self.client.login(username=user.username, password=self.password)
+            self.assertTrue(is_authenticated)
+
+        question_url = f'http://testserver/api/questions/{self.question.pk}/'
+        expected = create_api_response(403,
+                                       "Forbidden",
+                                       data={'detail': 'You do not have permission to perform this action.'})
+
+        data = {
+            'is_correct_answer': False,
+            'question': question_url,
+            'text': 'new text'
+        }
+
+        response = self.client.put('/api/answers/1/', data=data, content_type='application/json')
+
+        self.assertEqual(response.status_code, 403)
+        self.assertJSONEqual(response.content.decode(), expected)

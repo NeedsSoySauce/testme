@@ -1,6 +1,9 @@
 # IDE specific files
 .idea
 
+# Never commit these
+.env
+
 # The following is from: https://github.com/github/gitignore/blob/master/Python.gitignore
 
 # Byte-compiled / optimized / DLL files

@@ -59,6 +59,15 @@ The following will bring up a prompt where you can enter a username and password
 python manage.py createsuperuser
 ```
 
+#### Configure environment variables
+
+The *.env* file at the project's root contains the following Django settings. Check the [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/) for an explanation on what they do.
+
+* `DEBUG`
+* `SECRET_KEY`
+* `TIME_ZONE`
+* `LANGUAGE_CODE`
+
 ## Execution
 
 To start a development server:
@@ -76,7 +85,3 @@ To run tests:
 ```shell script
 python manage.py test
 ```
-
-## Deployment
-
-This project has not yet been deployed. **The secret key in settings.py is for development only**. If deploying to a production environment you should use environment variables (or some other system) that does not expose your secret key to the public.

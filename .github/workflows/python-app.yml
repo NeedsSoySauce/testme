@@ -1,5 +1,11 @@
 name: Python application
 
+env:
+  SECRET_KEY: 'abc123'
+  DEBUG: False
+  LANGUAGE_CODE: 'en-nz'
+  TIME_ZONE: 'Pacific/Auckland'
+
 on:
   push:
     branches: [ main ]
@@ -13,12 +19,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set environment variables
-      env:
-        SECRET_KEY: 'abc123'
-        DEBUG: False
-        LANGUAGE_CODE: 'en-nz'
-        TIME_ZONE: 'Pacific/Auckland'
     - name: Set up Python
       uses: actions/setup-python@v2
       with:

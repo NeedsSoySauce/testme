@@ -6,13 +6,13 @@ Quiz application backend built with Django. Mostly built to try out Django follo
 
 - [x] Create quizzes
 - [x] Add questions to quizzes
-- [ ] Add time limits to quizzes and or individual questions
-- [ ] See results at the end of a quiz
-- [ ] See stats for questions in a quiz to see how other users are doing
-- [ ] Detailed view of your own stats
+- [ ] ~~Add time limits to quizzes and or individual questions~~
+- [ ] ~~See results at the end of a quiz~~
+- [ ] ~~See stats for questions in a quiz to see how other users are doing~~
+- [ ] ~~Detailed view of your own stats~~
 - [x] Categorize quizzes
 - [ ] Search for quizzes in a public database
-- [ ] Create private quizzes with a shareable link
+- [ ] ~~Create private quizzes with a shareable link~~
 - [x] Setup loading of keys from environment variables
 
 ## Setup

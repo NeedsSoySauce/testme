@@ -11,7 +11,7 @@ Quiz application backend built with Django. Mostly built to try out Django follo
 - [ ] ~~See stats for questions in a quiz to see how other users are doing~~
 - [ ] ~~Detailed view of your own stats~~
 - [x] Categorize quizzes
-- [ ] Search for quizzes in a public database
+- [x] Search for quizzes in a public database
 - [ ] ~~Create private quizzes with a shareable link~~
 - [x] Setup loading of keys from environment variables
 

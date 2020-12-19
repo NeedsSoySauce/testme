@@ -1,6 +1,6 @@
 # testme
 
-Quiz application built with Django. Mostly built to try out Django following a good experience using Flask.
+Quiz application backend built with Django. Mostly built to try out Django following a good experience using Flask.
 
 ### Planned features
 
@@ -26,8 +26,8 @@ The following will clone this repository, setup and activate a virtual environme
 #### Windows
 
 ```shell script
-git clone https://github.com/NeedsSoySauce/COMPSCI-235-A3.git
-cd .\COMPSCI-235-A3\
+git clone https://github.com/NeedsSoySauce/testme.git
+cd .\testme\
 virtualenv .virtualenv
 .\.virtualenv\Scripts\activate
 pip install -r requirements.txt
@@ -36,8 +36,8 @@ pip install -r requirements.txt
 #### Mac OS / Linux
 
 ```shell script
-git clone https://github.com/NeedsSoySauce/COMPSCI-235-A3.git
-cd .\COMPSCI-235-A3\
+git clone https://github.com/NeedsSoySauce/testme.git
+cd .\testme\
 virtualenv .virtualenv
 source .\.virtualenv\Scripts\activate
 pip install -r requirements.txt
@@ -78,7 +78,7 @@ python manage.py runserver
 
 ## Testing
 
-This project uses Django default testing suite `unittest`. Experience with it so far suggests moving to `pytest` could be worthwhile.
+This project uses Django's default testing suite `unittest`. Experience with it so far suggests moving to `pytest` could be worthwhile.
 
 To run tests:
 
